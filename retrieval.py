@@ -7,20 +7,23 @@ import base64
 from requests import post, get
 import requests
 
-from auth import get_auth_header
 
+f = open('data.json')
+data = json.load(f)
+
+token = data["access_token"]
 
 t = open('topTracks.json')
 tData = json.load(t)
-for i in range (0,49):
-    print("Song: " + tData[i]["name"] + "\n" + "Artist: " + tData[i]["album"]["artists"][0]["name"])
-    print("\n")
+# for i in range (0,49):
+#     print("Song: " + tData[i]["name"] + "\n" + "Artist: " + tData[i]["album"]["artists"][0]["name"])
+#     print("\n")
     
 
 def search_artist(token, artist_name):
     url = "https://api.spotify.com/v1/search"
 
-    headers = get_auth_header(token)
+    headers = {"Authorization": "Bearer " + token}
     query = f"q={artist_name}&type=artist&limit=1"
 
     query_url = url + "?" + query
@@ -35,14 +38,14 @@ def get_artist_id(token, artist_name):
     result = search_artist(token, artist_name)
     return result['id']
     
-def get_artist_top_tracks(token):
-    url = "https://api.spotify.com/v1/artists/3WrFJ7ztbogyGnTHbHJFl2/top-tracks?market=CA"
+def get_artist_top_tracks(token, artist_name):
+    id = get_artist_id(token,artist_name)
 
-    headers = get_auth_header(token)
+    url = "https://api.spotify.com/v1/artists/" + id + "/top-tracks?market=CA"
+
+    headers = {"Authorization": "Bearer " + token}
 
     result = get(url, headers = headers)
     json_result = json.loads(result.content)
-    r = json.dumps(json_result)
-    with open("data.json", "w") as outfile:
-        outfile.write(r)
     return json_result
+
