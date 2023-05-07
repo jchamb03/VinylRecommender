@@ -74,5 +74,3 @@ def get_top_tracks(token):
     with open("topTracks.json", "w") as outfile:
         outfile.write(r)
 
-
-get_top_tracks(token)
