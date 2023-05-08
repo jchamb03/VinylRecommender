@@ -14,9 +14,6 @@ client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
 auth_code = os.getenv("AUTH_CODE")
 
-f = open('data.json')
-data = json.load(f)
-
 
 def get_token():
     auth_string = client_id + ":" + client_secret
@@ -43,8 +40,8 @@ def get_token():
     with open("data.json", "w") as outfile:
         outfile.write(r)
     
-    token = json_result["access_token"]
-    return token
+
+    
 
 def authorize_user_access():
     auth_headers = {
@@ -55,20 +52,36 @@ def authorize_user_access():
     }
     webbrowser.open("https://accounts.spotify.com/authorize?" + urlencode(auth_headers))
 
+
+
 def get_auth_header(token):
     return {"Authorization": "Bearer " + token}
 
-def get_top_tracks(token):
-    url = "https://api.spotify.com/v1/me/top/tracks"
-    user_headers = {
-        "Authorization": "Bearer " + token,
-        "Content-Type": "application/json"
+
+
+
+def refresh_token():
+    auth_string = client_id + ":" + client_secret
+    auth_bytes = auth_string.encode("utf-8")
+    auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
+    encoded_credentials = base64.b64encode(client_id.encode() + b':' + client_secret.encode()).decode("utf-8")
+
+    f = open('data.json')
+    data = json.load(f)
+
+    url = "https://accounts.spotify.com/api/token"
+    headers = {
+        "Authorization" : "Basic " + encoded_credentials,
+        "Content-Type" : "application/x-www-form-urlencoded"
     }
-    user_params = {
-        "limit": 50
+    data = {
+        "grant_type": "refresh_token",
+        "refresh_token": data["refresh_token"],
     }
-    user_tracks_response = get(url,params = user_params, headers = user_headers)
-    json_result = json.loads(user_tracks_response.content)["items"]
+
+    result = post(url, headers = headers, data = data)
+    json_result = json.loads(result.content)
     r = json.dumps(json_result, indent = 2)
-    with open("topTracks.json", "w") as outfile:
+    with open("data.json", "w") as outfile:
         outfile.write(r)
+
