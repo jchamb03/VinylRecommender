@@ -15,7 +15,7 @@ client_secret = os.getenv("CLIENT_SECRET")
 auth_code = os.getenv("AUTH_CODE")
 
 
-def get_token():
+def get_user_token():
     auth_string = client_id + ":" + client_secret
     auth_bytes = auth_string.encode("utf-8")
     auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
@@ -37,9 +37,31 @@ def get_token():
     result = post(url, headers = headers, data = data)
     json_result = json.loads(result.content)
     r = json.dumps(json_result, indent = 2)
-    with open("data.json", "w") as outfile:
+    with open("auth_data.json", "w") as outfile:
         outfile.write(r)
     
+
+def get_basic_token():
+    auth_string = client_id + ":" + client_secret
+    auth_bytes = auth_string.encode("utf-8")
+    auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
+    encoded_credentials = base64.b64encode(client_id.encode() + b':' + client_secret.encode()).decode("utf-8")
+
+
+    url = "https://accounts.spotify.com/api/token"
+    headers = {
+        "Authorization" : "Basic " + encoded_credentials,
+        "Content-Type" : "application/x-www-form-urlencoded"
+    }
+    data = {
+        "grant_type": "client_credentials"
+    }
+    result = post(url,headers = headers, data = data)
+    json_result = json.loads(result.content)
+    r = json.dumps(json_result, indent = 2)
+    with open("data.json", "w") as outfile:
+        outfile.write(r)
+
 
     
 
@@ -60,7 +82,7 @@ def get_auth_header(token):
 
 
 
-def refresh_token():
+def refresh_auth_token():
     auth_string = client_id + ":" + client_secret
     auth_bytes = auth_string.encode("utf-8")
     auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
@@ -82,6 +104,6 @@ def refresh_token():
     result = post(url, headers = headers, data = data)
     json_result = json.loads(result.content)
     r = json.dumps(json_result, indent = 2)
-    with open("data.json", "w") as outfile:
+    with open("auth_data.json", "w") as outfile:
         outfile.write(r)
 

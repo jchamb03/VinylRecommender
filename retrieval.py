@@ -8,10 +8,6 @@ from requests import post, get
 import requests
 
 
-f = open('data.json')
-data = json.load(f)
-
-token = data["access_token"]
 
 
 
