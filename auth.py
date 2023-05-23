@@ -63,16 +63,14 @@ def get_basic_token():
         outfile.write(r)
 
 
-    
-
 def authorize_user_access():
     auth_headers = {
     "client_id": client_id,
     "response_type": "code",
     "redirect_uri": "http://localhost:7777/callback",
-    "scope": "user-top-read user-library-read user-read-private"
+    "scope": "user-top-read user-library-read user-read-private",
     }
-    webbrowser.open("https://accounts.spotify.com/authorize?" + urlencode(auth_headers))
+    result = webbrowser.open("https://accounts.spotify.com/authorize?" + urlencode(auth_headers))
 
 
 
@@ -88,7 +86,7 @@ def refresh_auth_token():
     auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
     encoded_credentials = base64.b64encode(client_id.encode() + b':' + client_secret.encode()).decode("utf-8")
 
-    f = open('data.json')
+    f = open('auth_data.json')
     data = json.load(f)
 
     url = "https://accounts.spotify.com/api/token"
