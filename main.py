@@ -1,7 +1,6 @@
 import json
 import auth
 import retrieval
-import manipulation
 
 
 
@@ -10,8 +9,8 @@ import manipulation
 
 
 # Get authorization tokens, put them in json files. 
-auth.get_user_token()
-auth.get_basic_token()
+# auth.get_user_token()
+# auth.get_basic_token()
 
 # Retrieve the tokens from json file
 t = open("auth_data.json")
